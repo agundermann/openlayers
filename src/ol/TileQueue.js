@@ -100,6 +100,7 @@ class TileQueue extends PriorityQueue {
    */
   loadMoreTiles(maxTotalLoading, maxNewLoads) {
     let newLoads = 0;
+    let abortedTiles = false;
     while (
       this.tilesLoading_ < maxTotalLoading &&
       newLoads < maxNewLoads &&
@@ -113,7 +114,15 @@ class TileQueue extends PriorityQueue {
         ++this.tilesLoading_;
         ++newLoads;
         tile.load();
+      } else if (state === TileState.EMPTY) {
+        abortedTiles = true;
       }
+    }
+
+    // force a re-render after draining the queue with EMPTY tiles to account for scenarios
+    // where new IDLE tiles were blocked in this frame (via `isKeyQueued() === true`) without scheduling a new frame
+    if (abortedTiles && !newLoads && !this.tilesLoading_) {
+      this.tileChangeCallback_();
     }
   }
 }
