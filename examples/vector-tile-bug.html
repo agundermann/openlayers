@@ -1,0 +1,23 @@
+---
+layout: example.html
+title: Vector Tile Bug
+shortdesc: Trigger source.changed() in quick succession
+docs: >
+  Demonstrates a bug where tiles get stuck loading when source.changed() is called rapidly.
+
+  Use the slider to change the hue of the tiles, which triggers source.changed(). When done quick enough, the map will stop loading more tiles.
+resources:
+  - https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css
+---
+<div id="map" class="map"></div>
+<form class="mt-2">
+  <div class="form-group">
+    <label for="hue" class="col-form-label pb-0">Fill color hue</label>
+    <input id="hue" class="form-range" type="range" min="0" max="360" step="1" value="200"/>
+    <small class="form-text text-muted">
+      Current hue: <span id="hue-value">200°</span>.
+      Drag quickly to trigger rapid <code>source.changed()</code> calls.
+    </small>
+  </div>
+</form>
+<p id="status" class="mt-1 text-muted">Loading tiles…</p>
