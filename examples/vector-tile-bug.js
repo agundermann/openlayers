@@ -16,10 +16,12 @@ const source = new VectorTileSource({
     tileSize: 64,
   }),
 
-  tileUrlFunction: (tileCoord) => tileCoord.join('/'),
+  url: `{z}/{x}/{y}/${hue}`,
 
   tileLoadFunction: (tile, url) => {
-    const tileCoord = url.split('/').map(Number);
+    const parts = url.split('/');
+    const tileCoord = parts.slice(0, 3).map(Number);
+    const tileHue = parseInt(parts[3]);
     const extent = source.getTileGrid().getTileCoordExtent(tileCoord);
 
     setTimeout(() => {
@@ -36,7 +38,7 @@ const source = new VectorTileSource({
               [minX + pad, minY + pad],
             ],
           ]),
-          color: `hsl(${hue}, 70%, 60%)`,
+          color: `hsl(${tileHue}, 70%, 60%)`,
         }),
       ]);
     }, 100);
@@ -88,5 +90,5 @@ const hueValue = document.getElementById('hue-value');
 document.getElementById('hue').addEventListener('input', function () {
   hue = parseInt(this.value);
   hueValue.textContent = hue + '°';
-  source.changed();
+  source.setUrl(`{z}/{x}/{y}/${hue}`);
 });
